@@ -70,13 +70,9 @@
                         <span class="text-slate-400">Work Units Completed</span>
                         <span id="wus" class="accent-text font-bold text-lg text-right">Loading…</span>
                     </div>
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex justify-between items-center">
                         <span class="text-slate-400">Global Team Rank</span>
                         <span id="rank" class="accent-text font-bold text-lg text-right">Loading…</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">Active Contributors</span>
-                        <span id="members" class="accent-text font-bold text-lg text-right">Loading…</span>
                     </div>
                 </div>
             </div>
@@ -154,9 +150,6 @@
                 document.getElementById("points").innerText = (data.score || 0).toLocaleString();
                 document.getElementById("wus").innerText = (data.wus || 0).toLocaleString();
                 document.getElementById("rank").innerText = "#" + (data.rank ? data.rank.toLocaleString() : "Unranked");
-                
-                const memberCount = data.donors ? data.donors.length : "0";
-                document.getElementById("members").innerText = memberCount;
 
                 document.getElementById("updated").innerText = new Date().toLocaleTimeString();
                 document.getElementById("updated").classList.remove("text-red-400");
