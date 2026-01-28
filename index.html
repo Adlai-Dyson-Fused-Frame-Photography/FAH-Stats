@@ -133,10 +133,10 @@
 
     <script>
         const TEAM_ID = "1067814";
-        const API_URL = `https://api.foldingathome.org/team/${TEAM_ID}`;
+        // Using a CORS proxy to bypass API restrictions
+        const API_URL = `https://corsproxy.io/?https://api.foldingathome.org/team/${TEAM_ID}`;
 
         function getNextMilestone(points) {
-            // Team milestones often go much higher than individual ones
             const milestones = [
                 100000, 250000, 500000, 1000000, 2500000, 5000000, 
                 10000000, 25000000, 50000000, 100000000, 500000000
@@ -151,34 +151,29 @@
                 
                 const data = await res.json();
                 
-                // Update basic stats
-                // Note: API returns 'score' for team total points
-                document.getElementById("points").innerText = data.score.toLocaleString();
-                document.getElementById("wus").innerText = data.wus.toLocaleString();
+                document.getElementById("points").innerText = (data.score || 0).toLocaleString();
+                document.getElementById("wus").innerText = (data.wus || 0).toLocaleString();
                 document.getElementById("rank").innerText = "#" + (data.rank ? data.rank.toLocaleString() : "Unranked");
                 
-                // Members count (if available in the array)
                 const memberCount = data.donors ? data.donors.length : "0";
                 document.getElementById("members").innerText = memberCount;
 
-                // Timestamp
                 document.getElementById("updated").innerText = new Date().toLocaleTimeString();
+                document.getElementById("updated").classList.remove("text-red-400");
 
-                // Progress Bar Logic
-                const next = getNextMilestone(data.score);
-                const percent = (data.score / next) * 100;
+                const next = getNextMilestone(data.score || 0);
+                const percent = ((data.score || 0) / next) * 100;
                 
                 document.getElementById("milestoneBar").style.width = Math.min(percent, 100) + "%";
                 document.getElementById("milestoneLabel").innerText = next.toLocaleString() + " Points";
 
             } catch (error) {
                 console.error("Stats Error:", error);
-                document.getElementById("updated").innerText = "Connection Error";
+                document.getElementById("updated").innerText = "Connection Error (CORS)";
                 document.getElementById("updated").classList.add("text-red-400");
             }
         }
 
-        // Initialize and setup interval
         loadStats();
         setInterval(loadStats, 60000);
     </script>
