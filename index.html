@@ -6,11 +6,25 @@
     <meta name="description" content="Official Folding@home statistics for the Adlai Dyson | Fused Frame Photography team. Tracking our contribution to global medical research." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="https://cdn-eu.fusedframe.co.uk/main-logos/jpg/squarefavicon-nocircle.jpg" />
+    <!-- Updated to use the stable Tailwind Play CDN with proper configuration -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .accent-text { color: #94fdf8; }
-        .accent-bg { background-color: #94fdf8; }
-        .border-glow { border-color: rgba(148, 253, 248, 0.1); }
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#94fdf8',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .accent-text { @apply text-[#94fdf8]; }
+            .accent-bg { @apply bg-[#94fdf8]; }
+            .border-glow { border-color: rgba(148, 253, 248, 0.1); }
+        }
     </style>
 </head>
 
@@ -129,8 +143,12 @@
 
     <script>
         const TEAM_ID = "1067814";
-        // Using a CORS proxy to bypass API restrictions
-        const API_URL = `https://corsproxy.io/?https://api.foldingathome.org/team/${TEAM_ID}`;
+        // List of proxies to try if one fails
+        const PROXIES = [
+            (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+            (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            (url) => `https://thingproxy.freeboard.io/fetch/${url}`
+        ];
 
         function getNextMilestone(points) {
             const milestones = [
@@ -141,30 +159,53 @@
         }
 
         async function loadStats() {
-            try {
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error("API Offline");
-                
-                const data = await res.json();
-                
-                document.getElementById("points").innerText = (data.score || 0).toLocaleString();
-                document.getElementById("wus").innerText = (data.wus || 0).toLocaleString();
-                document.getElementById("rank").innerText = "#" + (data.rank ? data.rank.toLocaleString() : "Unranked");
+            const targetUrl = `https://api.foldingathome.org/team/${TEAM_ID}`;
+            let success = false;
 
-                document.getElementById("updated").innerText = new Date().toLocaleTimeString();
-                document.getElementById("updated").classList.remove("text-red-400");
+            // Try each proxy until one works
+            for (const proxyFn of PROXIES) {
+                try {
+                    const res = await fetch(proxyFn(targetUrl));
+                    if (!res.ok) continue;
+                    
+                    let data;
+                    // Handle AllOrigins structure which wraps the response in a 'contents' string
+                    if (proxyFn.toString().includes('allorigins')) {
+                        const json = await res.json();
+                        data = JSON.parse(json.contents);
+                    } else {
+                        data = await res.json();
+                    }
+                    
+                    if (data) {
+                        updateUI(data);
+                        success = true;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn("Proxy attempt failed, trying next...");
+                }
+            }
 
-                const next = getNextMilestone(data.score || 0);
-                const percent = ((data.score || 0) / next) * 100;
-                
-                document.getElementById("milestoneBar").style.width = Math.min(percent, 100) + "%";
-                document.getElementById("milestoneLabel").innerText = next.toLocaleString() + " Points";
-
-            } catch (error) {
-                console.error("Stats Error:", error);
-                document.getElementById("updated").innerText = "Connection Error (CORS)";
+            if (!success) {
+                document.getElementById("updated").innerText = "Connection Error";
                 document.getElementById("updated").classList.add("text-red-400");
             }
+        }
+
+        function updateUI(data) {
+            document.getElementById("points").innerText = (data.score || 0).toLocaleString();
+            document.getElementById("wus").innerText = (data.wus || 0).toLocaleString();
+            document.getElementById("rank").innerText = "#" + (data.rank ? data.rank.toLocaleString() : "Unranked");
+
+            document.getElementById("updated").innerText = new Date().toLocaleTimeString();
+            document.getElementById("updated").classList.remove("text-red-400");
+
+            const next = getNextMilestone(data.score || 0);
+            const percent = ((data.score || 0) / next) * 100;
+            
+            document.getElementById("milestoneBar").style.width = Math.min(percent, 100) + "%";
+            document.getElementById("milestoneLabel").innerText = next.toLocaleString() + " Points";
         }
 
         loadStats();
