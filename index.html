@@ -6,7 +6,8 @@
     <meta name="description" content="Official Folding@home statistics for the Adlai Dyson | Fused Frame Photography team. Tracking our contribution to global medical research." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="https://cdn-eu.fusedframe.co.uk/main-logos/jpg/squarefavicon-nocircle.jpg" />
-    <!-- Updated to use the stable Tailwind Play CDN with proper configuration -->
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,10 +26,24 @@
             .accent-bg { @apply bg-[#94fdf8]; }
             .border-glow { border-color: rgba(148, 253, 248, 0.1); }
         }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
     </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500/30">
 
     <header class="py-8 flex justify-center">
         <img src="https://cdn-eu.fusedframe.co.uk/main-logos/png/squarelogo-light-crop.png" 
@@ -36,9 +51,9 @@
              class="max-w-[180px] md:max-w-[220px] transition-transform hover:scale-105 duration-300" />
     </header>
 
-    <main class="flex-grow max-w-5xl mx-auto px-6 pb-12">
+    <main class="flex-grow max-w-5xl mx-auto px-6 pb-12 w-full">
         <div class="text-center mb-12">
-            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">
                 Team Statistics
             </h1>
             <p class="text-lg text-slate-400 font-medium">
@@ -47,7 +62,7 @@
         </div>
 
         <!-- ENHANCED ABOUT SECTION -->
-        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 mb-10 backdrop-blur-sm">
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 mb-10 backdrop-blur-sm shadow-xl">
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <div class="flex-1">
                     <h2 class="text-2xl font-bold mb-4 accent-text">The Mission: Decoding Biology</h2>
@@ -58,10 +73,10 @@
                         By pooling our computing resources, we provide scientists at the world's leading laboratories with the computational power required to simulate these complex biological processes, accelerating the path toward new treatments and cures.
                     </p>
                 </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 w-full md:w-64 text-center">
-                    <span class="text-xs uppercase tracking-widest text-slate-500 font-bold">Team Identity</span>
-                    <div class="text-3xl font-mono mt-2 accent-text">1067814</div>
-                    <div class="text-[10px] text-slate-500 mt-1">OFFICIAL TEAM ID</div>
+                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 w-full md:w-64 text-center shadow-inner">
+                    <span class="text-xs uppercase tracking-widest text-slate-500 font-bold block mb-2">Team Identity</span>
+                    <div class="text-3xl font-mono accent-text drop-shadow-[0_0_8px_rgba(148,253,248,0.3)]">1067814</div>
+                    <div class="text-[10px] text-slate-500 mt-2">OFFICIAL TEAM ID</div>
                 </div>
             </div>
         </div>
@@ -70,35 +85,38 @@
         <section class="grid md:grid-cols-2 gap-6">
 
             <!-- TEAM CONTRIBUTION -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors">
-                <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors shadow-lg relative overflow-hidden group">
+                <!-- Subtle glow effect behind stats -->
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl group-hover:bg-cyan-500/10 transition-all duration-700"></div>
+
+                <h3 class="font-bold text-xl mb-6 flex items-center gap-2 relative z-10">
                     Team Impact
                 </h3>
 
-                <div class="space-y-4">
+                <div class="space-y-4 relative z-10">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                         <span class="text-slate-400">Total Points</span>
-                        <span id="points" class="accent-text font-bold text-lg text-right">Loading…</span>
+                        <span id="points" class="accent-text font-bold text-lg text-right tabular-nums">Loading…</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                         <span class="text-slate-400">Work Units Completed</span>
-                        <span id="wus" class="accent-text font-bold text-lg text-right">Loading…</span>
+                        <span id="wus" class="accent-text font-bold text-lg text-right tabular-nums">Loading…</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-slate-400">Global Team Rank</span>
-                        <span id="rank" class="accent-text font-bold text-lg text-right">Loading…</span>
+                        <span id="rank" class="accent-text font-bold text-lg text-right tabular-nums">Loading…</span>
                     </div>
                 </div>
             </div>
 
             <!-- LIVE STATUS & PROGRESS -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-lg relative overflow-hidden">
                 <h3 class="font-bold text-xl mb-6">Real-Time Progress</h3>
                 
                 <div class="flex items-center gap-3 mb-6">
                     <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                        <span id="statusPing" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span id="statusDot" class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
                     </div>
                     <span class="text-sm text-slate-400">Live API Feed: <span id="updated" class="accent-text font-mono">Syncing...</span></span>
                 </div>
@@ -107,24 +125,34 @@
                 <div class="mt-8">
                     <div class="flex justify-between text-sm mb-2">
                         <span class="text-slate-400">Next Team Milestone</span>
-                        <span id="milestoneLabel" class="accent-text font-medium">...</span>
+                        <span id="milestoneLabel" class="accent-text font-medium tabular-nums">...</span>
                     </div>
-                    <div class="w-full bg-slate-800 rounded-full h-4 p-1 overflow-hidden shadow-inner">
+                    <div class="w-full bg-slate-800 rounded-full h-4 p-1 overflow-hidden shadow-inner relative">
                         <div id="milestoneBar" 
-                             class="accent-bg h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(148,253,248,0.5)]" 
+                             class="accent-bg h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(148,253,248,0.5)] relative overflow-hidden" 
                              style="width:0%">
+                             <!-- Shimmer effect -->
+                             <div class="absolute top-0 left-0 bottom-0 right-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                         </div>
                     </div>
                     <p class="mt-4 text-xs text-slate-500 italic leading-relaxed">
-                        Stats refresh every 60 seconds. Our progress is calculated based on the cumulative points of all team members.
+                        Stats refresh every 60 seconds. Progress is based on cumulative team points.
                     </p>
+                </div>
+                
+                <!-- Fallback Button (Hidden by default) -->
+                <div id="fallbackLink" class="hidden mt-4 pt-4 border-t border-slate-800 text-center">
+                    <p class="text-xs text-red-400 mb-2">Unable to load live data (Adblocker/Network issue)</p>
+                    <a href="https://stats.foldingathome.org/team/1067814" target="_blank" class="text-xs text-cyan-400 hover:text-cyan-300 underline">View on Official Site</a>
                 </div>
             </div>
         </section>
 
         <!-- CTA -->
-        <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-10 mt-10 text-center shadow-2xl">
-            <h4 class="text-xl font-bold mb-2">Join Our Research Effort</h4>
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-10 mt-10 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50"></div>
+            
+            <h4 class="text-xl font-bold mb-2 text-white">Join Our Research Effort</h4>
             <p class="text-slate-400 text-sm max-w-lg mx-auto">
                 Turn your computer's idle time into scientific discovery. Join Team <strong>1067814</strong> to fold with us.
             </p>
@@ -136,18 +164,31 @@
         </div>
     </main>
 
-    <footer class="mt-auto py-8 text-center text-sm text-slate-500 border-t border-slate-900">
+    <footer class="mt-auto py-8 text-center text-sm text-slate-500 border-t border-slate-900 bg-slate-950">
         <p>© Adlai Dyson | Fused Frame Photography</p>
         <p class="mt-1 opacity-50">Data provided by the Folding@home Public API</p>
     </footer>
 
     <script>
         const TEAM_ID = "1067814";
-        // List of proxies to try if one fails
+        
+        // Revised proxy list with more robust options for client-side fetching
         const PROXIES = [
-            (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-            (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-            (url) => `https://thingproxy.freeboard.io/fetch/${url}`
+            // CodeTabs is usually very reliable for simple JSON fetching
+            {
+                url: (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+                type: 'direct'
+            },
+            // AllOrigins Raw often avoids the JSON parsing issues
+            {
+                url: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                type: 'direct'
+            },
+            // CorsProxy.io
+            {
+                url: (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                type: 'direct'
+            }
         ];
 
         function getNextMilestone(points) {
@@ -155,60 +196,109 @@
                 100000, 250000, 500000, 1000000, 2500000, 5000000, 
                 10000000, 25000000, 50000000, 100000000, 500000000
             ];
-            return milestones.find(m => m > points) || points * 1.5;
+            // If points exceed all milestones, set next goal +50%
+            return milestones.find(m => m > points) || Math.floor(points * 1.5);
         }
 
         async function loadStats() {
-            const targetUrl = `https://api.foldingathome.org/team/${TEAM_ID}`;
+            // Using the stats.foldingathome.org API which is sometimes more stable for team lookups
+            const targetUrl = `https://stats.foldingathome.org/api/team/${TEAM_ID}`;
+            
             let success = false;
+            let finalData = null;
 
-            // Try each proxy until one works
-            for (const proxyFn of PROXIES) {
+            document.getElementById("updated").innerText = "Syncing...";
+            document.getElementById("updated").classList.remove("text-red-400", "text-green-400");
+            document.getElementById("updated").classList.add("accent-text");
+
+            // Try each proxy sequentially
+            for (const proxy of PROXIES) {
                 try {
-                    const res = await fetch(proxyFn(targetUrl));
-                    if (!res.ok) continue;
+                    const fetchUrl = proxy.url(targetUrl);
+                    console.log(`Attempting fetch via: ${fetchUrl}`);
                     
-                    let data;
-                    // Handle AllOrigins structure which wraps the response in a 'contents' string
-                    if (proxyFn.toString().includes('allorigins')) {
-                        const json = await res.json();
-                        data = JSON.parse(json.contents);
-                    } else {
-                        data = await res.json();
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+                    const res = await fetch(fetchUrl, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (!res.ok) {
+                        console.warn(`Proxy ${fetchUrl} failed with status: ${res.status}`);
+                        continue;
                     }
+
+                    const data = await res.json();
                     
-                    if (data) {
-                        updateUI(data);
+                    // Validation: Ensure we actually got the team data (check for id or name)
+                    if (data && (data.id || data.name || data.credit)) {
+                        finalData = data;
                         success = true;
-                        break;
+                        break; // Stop loop on success
                     }
                 } catch (e) {
-                    console.warn("Proxy attempt failed, trying next...");
+                    console.warn(`Proxy attempt failed:`, e);
                 }
             }
 
-            if (!success) {
-                document.getElementById("updated").innerText = "Connection Error";
-                document.getElementById("updated").classList.add("text-red-400");
+            if (success && finalData) {
+                updateUI(finalData);
+            } else {
+                handleError();
             }
         }
 
         function updateUI(data) {
-            document.getElementById("points").innerText = (data.score || 0).toLocaleString();
-            document.getElementById("wus").innerText = (data.wus || 0).toLocaleString();
-            document.getElementById("rank").innerText = "#" + (data.rank ? data.rank.toLocaleString() : "Unranked");
+            // API field names differ slightly between endpoints sometimes
+            // stats.foldingathome.org usually returns: credit, wus, rank
+            const score = data.credit || data.score || 0;
+            const wus = data.wus || 0;
+            const rank = data.rank || 0;
 
-            document.getElementById("updated").innerText = new Date().toLocaleTimeString();
-            document.getElementById("updated").classList.remove("text-red-400");
+            document.getElementById("points").innerText = score.toLocaleString();
+            document.getElementById("wus").innerText = wus.toLocaleString();
+            document.getElementById("rank").innerText = rank ? "#" + rank.toLocaleString() : "Unranked";
 
-            const next = getNextMilestone(data.score || 0);
-            const percent = ((data.score || 0) / next) * 100;
+            const now = new Date();
+            document.getElementById("updated").innerText = now.toLocaleTimeString();
+            document.getElementById("updated").classList.add("text-green-400");
+            document.getElementById("updated").classList.remove("accent-text");
+
+            const next = getNextMilestone(score);
+            const percent = ((score) / next) * 100;
             
             document.getElementById("milestoneBar").style.width = Math.min(percent, 100) + "%";
             document.getElementById("milestoneLabel").innerText = next.toLocaleString() + " Points";
+
+            // Status indicators
+            document.getElementById("statusPing").classList.remove("bg-red-400");
+            document.getElementById("statusPing").classList.add("bg-cyan-400", "animate-ping");
+            document.getElementById("statusDot").classList.remove("bg-red-500");
+            document.getElementById("statusDot").classList.add("bg-cyan-500");
+            
+            // Hide fallback
+            document.getElementById("fallbackLink").classList.add("hidden");
         }
 
+        function handleError() {
+            document.getElementById("updated").innerText = "Offline";
+            document.getElementById("updated").classList.remove("accent-text");
+            document.getElementById("updated").classList.add("text-red-400");
+            
+            // Stop ping animation to indicate offline
+            document.getElementById("statusPing").classList.remove("animate-ping", "bg-cyan-400");
+            document.getElementById("statusPing").classList.add("bg-red-400");
+            document.getElementById("statusDot").classList.remove("bg-cyan-500");
+            document.getElementById("statusDot").classList.add("bg-red-500");
+
+            // Show manual link
+            document.getElementById("fallbackLink").classList.remove("hidden");
+        }
+
+        // Initial load
         loadStats();
+        
+        // Refresh every 60 seconds
         setInterval(loadStats, 60000);
     </script>
 </body>
